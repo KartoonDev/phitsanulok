@@ -14,13 +14,36 @@ export type Post = {
   category: string;
 };
 
+export type PlaceCategory =
+  | "ธรรมชาติ"
+  | "วัดและประวัติศาสตร์"
+  | "ชุมชน"
+  | "อาหาร"
+  | "พิพิธภัณฑ์และศูนย์เรียนรู้";
+
 export type Place = {
   id: string;
   name: string;
   slug: string;
   description: string;
-  category: "ธรรมชาติ" | "วัดและประวัติศาสตร์" | "ชุมชน" | "อาหาร";
+  category: PlaceCategory;
   location: string;
+  district: string;
+  address: string;
+  openingHours: string;
+  entryFee: string;
+  phone: string;
+  website: string;
+  latitude: number;
+  longitude: number;
+  tags: string[];
+  highlights: string[];
+  travelTips: string[];
+  nearbyPlaceSlugs: string[];
+  duration: string;
+  bestTimeToVisit: string;
+  accessibility: string;
+  mapUrl: string;
   coverImage: string;
   featured: boolean;
 };

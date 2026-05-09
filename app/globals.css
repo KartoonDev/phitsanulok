@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --background: 42 42% 97%;
-  --foreground: 169 28% 12%;
-  --card: 0 0% 100%;
-  --card-foreground: 169 28% 12%;
+  --background: 43 48% 97%;
+  --foreground: 173 32% 11%;
+  --card: 42 48% 99%;
+  --card-foreground: 173 32% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 169 28% 12%;
-  --primary: 170 62% 24%;
-  --primary-foreground: 42 48% 96%;
-  --secondary: 35 68% 89%;
-  --secondary-foreground: 170 44% 18%;
-  --muted: 38 30% 91%;
-  --muted-foreground: 169 12% 38%;
-  --accent: 18 74% 55%;
+  --popover-foreground: 173 32% 11%;
+  --primary: 174 58% 22%;
+  --primary-foreground: 45 70% 97%;
+  --secondary: 40 64% 91%;
+  --secondary-foreground: 174 46% 17%;
+  --muted: 42 36% 92%;
+  --muted-foreground: 171 12% 36%;
+  --accent: 21 76% 52%;
   --accent-foreground: 42 48% 96%;
   --destructive: 0 72% 50%;
   --destructive-foreground: 0 0% 100%;
-  --border: 39 24% 84%;
-  --input: 39 24% 84%;
-  --ring: 170 62% 24%;
+  --border: 40 28% 83%;
+  --input: 40 28% 83%;
+  --ring: 174 58% 22%;
   --radius: 0.5rem;
 }
 
@@ -35,10 +35,12 @@ html {
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(221, 91, 45, 0.12), transparent 30rem),
-    linear-gradient(180deg, hsl(var(--background)), #f4efe6 45%, #f8f5ee);
+    radial-gradient(circle at top left, rgba(222, 93, 44, 0.12), transparent 28rem),
+    radial-gradient(circle at 85% 12%, rgba(37, 125, 117, 0.12), transparent 24rem),
+    linear-gradient(180deg, hsl(var(--background)), #f5efe3 44%, #fbf8f0);
   color: hsl(var(--foreground));
   font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
 }
 
 .container-page {

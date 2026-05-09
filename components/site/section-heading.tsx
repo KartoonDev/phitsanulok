@@ -12,8 +12,10 @@ export function SectionHeading({
   return (
     <div className="mb-8 max-w-3xl">
       <Badge variant="secondary">{eyebrow}</Badge>
-      <h2 className="mt-3 text-3xl font-bold tracking-normal md:text-4xl">{title}</h2>
-      <p className="mt-3 leading-7 text-muted-foreground">{description}</p>
+      <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal md:text-4xl">
+        {title}
+      </h2>
+      <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">{description}</p>
     </div>
   );
 }

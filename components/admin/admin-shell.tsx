@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { FileText, ImageIcon, LayoutDashboard, Settings } from "lucide-react";
+import { FileText, ImageIcon, LayoutDashboard, MapPin, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const adminNav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/places", label: "Places", icon: MapPin },
   { href: "/admin/content", label: "Content", icon: FileText },
   { href: "/admin/media", label: "Media", icon: ImageIcon },
   { href: "/admin/settings", label: "Settings", icon: Settings }

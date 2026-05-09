@@ -28,9 +28,14 @@ export default function AdminPage() {
             ภาพรวมระบบจัดการเนื้อหาจังหวัดพิษณุโลก พร้อมต่อ Supabase
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/content">จัดการเนื้อหา</Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="secondary">
+            <Link href="/admin/places">จัดการสถานที่</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/admin/content">จัดการเนื้อหา</Link>
+          </Button>
+        </div>
       </div>
       <div className="grid gap-4 md:grid-cols-4">
         {metrics.map((metric) => (
