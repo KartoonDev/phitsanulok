@@ -21,6 +21,13 @@ export type PlaceCategory =
   | "อาหาร"
   | "พิพิธภัณฑ์และศูนย์เรียนรู้";
 
+export type PlaceCategorySlug =
+  | "nature"
+  | "temple-history"
+  | "community"
+  | "food"
+  | "museum-learning";
+
 export type Place = {
   id: string;
   name: string;

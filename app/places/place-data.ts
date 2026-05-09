@@ -24,7 +24,7 @@ const data = sourceData as PlaceDataModule;
 
 const detailBySlug: Record<string, PlaceDetailExtras> = {
   "wat-phra-si-rattana-mahathat": {
-    district: "อำเภอเมืองพิษณุโลก",
+    district: "เมืองพิษณุโลก",
     openingHours: "เปิดทุกวัน 06:00-18:00 น.",
     entryFee: "เข้าชมฟรี",
     address: "ถนนพุทธบูชา ตำบลในเมือง อำเภอเมืองพิษณุโลก",
@@ -36,7 +36,7 @@ const detailBySlug: Record<string, PlaceDetailExtras> = {
     ]
   },
   "phu-hin-rong-kla": {
-    district: "อำเภอนครไทย",
+    district: "นครไทย",
     openingHours: "เปิดทุกวัน 08:00-16:30 น.",
     entryFee: "มีค่าธรรมเนียมอุทยานตามประกาศ",
     address: "อุทยานแห่งชาติภูหินร่องกล้า อำเภอนครไทย",
@@ -48,7 +48,7 @@ const detailBySlug: Record<string, PlaceDetailExtras> = {
     ]
   },
   "nan-river-community": {
-    district: "อำเภอเมืองพิษณุโลก",
+    district: "เมืองพิษณุโลก",
     openingHours: "เดินเล่นได้ตลอดวัน ร้านค้าคึกคักช่วงเย็น",
     entryFee: "เข้าชมฟรี",
     address: "ย่านชุมชนริมแม่น้ำน่าน อำเภอเมืองพิษณุโลก",
@@ -68,7 +68,7 @@ export const placeCategories =
 
 export const placeDistricts =
   data.placeDistricts ??
-  Array.from(new Set(places.map((place) => place.district ?? place.location)));
+  Array.from(new Set(places.map((place) => sourceData.normalizeDistrict(place.district ?? place.location))));
 
 export function getPlaceBySlug(slug: string) {
   const sourcePlace = data.getPlaceBySlug?.(slug) ?? data.places.find((place) => place.slug === slug);
@@ -90,7 +90,7 @@ function enrichPlace(place: Place): PlaceDetail {
   return {
     ...place,
     ...detail,
-    district: detail.district ?? place.location,
+    district: sourceData.normalizeDistrict(detail.district ?? place.district),
     mapQuery: detail.mapQuery ?? `${place.name} ${place.location}`,
     openingHours: detail.openingHours ?? "ตรวจสอบเวลาเปิดก่อนเดินทาง",
     entryFee: detail.entryFee ?? "ตรวจสอบค่าเข้าชมจากผู้ให้บริการ",

@@ -3,11 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
+  Accessibility,
+  CalendarDays,
   Clock3,
   Coins,
+  Globe2,
   Lightbulb,
   MapPin,
   Navigation,
+  Phone,
   Route
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -42,12 +46,16 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
   }
 
   const nearbyPlaces = getNearbyPlaces(place.slug, 3);
-  const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    place.mapQuery ?? place.name
-  )}`;
+  const mapHref =
+    place.mapUrl ??
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      place.mapQuery ?? place.name
+    )}`;
+  const phoneNumber = place.phone?.replace(/[^\d+]/g, "");
+  const phoneHref = phoneNumber ? `tel:${phoneNumber}` : "";
 
   return (
-    <main>
+    <div>
       <section className="relative isolate min-h-[70vh] overflow-hidden">
         <Image
           src={place.coverImage}
@@ -96,6 +104,8 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
         <div className="space-y-5">
           <div className="grid gap-3 sm:grid-cols-2">
             <InfoCard icon={<Clock3 />} label="เวลาเปิด" value={place.openingHours} />
+            <InfoCard icon={<CalendarDays />} label="ช่วงที่น่าไป" value={place.bestTimeToVisit} />
+            <InfoCard icon={<Clock3 />} label="ใช้เวลาโดยประมาณ" value={place.duration} />
             <InfoCard icon={<Coins />} label="ค่าเข้าชม" value={place.entryFee} />
           </div>
 
@@ -139,6 +149,24 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
               </div>
             </CardContent>
           </Card>
+
+          {place.accessibility && (
+            <Card>
+              <CardContent className="pt-5 md:p-6">
+                <div className="flex items-start gap-3">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
+                    <Accessibility className="size-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black">การเข้าถึงพื้นที่</h2>
+                    <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                      {place.accessibility}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
@@ -159,6 +187,46 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
                   เปิดเส้นทาง
                 </Link>
               </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-5">
+              <h2 className="text-xl font-black">ข้อมูลติดต่อ</h2>
+              <div className="mt-4 space-y-3 text-sm leading-6">
+                {place.address && (
+                  <p className="flex gap-3 text-muted-foreground">
+                    <MapPin className="mt-1 size-4 shrink-0 text-primary" />
+                    <span>{place.address}</span>
+                  </p>
+                )}
+                {place.phone && phoneHref && (
+                  <Link
+                    href={phoneHref}
+                    className="focus-ring flex gap-3 rounded-md text-muted-foreground hover:text-primary"
+                  >
+                    <Phone className="mt-1 size-4 shrink-0 text-primary" />
+                    <span>{place.phone}</span>
+                  </Link>
+                )}
+                {place.phone && !phoneHref && (
+                  <p className="flex gap-3 text-muted-foreground">
+                    <Phone className="mt-1 size-4 shrink-0 text-primary" />
+                    <span>{place.phone}</span>
+                  </p>
+                )}
+                {place.website && (
+                  <Link
+                    href={place.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="focus-ring flex gap-3 rounded-md text-muted-foreground hover:text-primary"
+                  >
+                    <Globe2 className="mt-1 size-4 shrink-0 text-primary" />
+                    <span className="break-all">{place.website}</span>
+                  </Link>
+                )}
+              </div>
             </CardContent>
           </Card>
         </aside>
@@ -184,7 +252,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
           </div>
         </section>
       )}
-    </main>
+    </div>
   );
 }
 

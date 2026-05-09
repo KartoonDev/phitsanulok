@@ -1,4 +1,52 @@
-import type { MediaItem, Place, PlaceCategory, Post } from "@/lib/types";
+import type { MediaItem, Place, PlaceCategory, PlaceCategorySlug, Post } from "@/lib/types";
+
+export const placeCategoryLabels: Record<PlaceCategorySlug, PlaceCategory> = {
+  nature: "ธรรมชาติ",
+  "temple-history": "วัดและประวัติศาสตร์",
+  community: "ชุมชน",
+  food: "อาหาร",
+  "museum-learning": "พิพิธภัณฑ์และศูนย์เรียนรู้"
+};
+
+const categorySlugByLabel = Object.fromEntries(
+  Object.entries(placeCategoryLabels).map(([slug, label]) => [label, slug])
+) as Record<PlaceCategory, PlaceCategorySlug>;
+
+const legacyCategoryLabels: Record<string, PlaceCategory> = {
+  culture: "วัดและประวัติศาสตร์",
+  history: "วัดและประวัติศาสตร์",
+  places: "ชุมชน"
+};
+
+export function normalizePlaceCategory(category: string | null | undefined): PlaceCategory {
+  if (!category) {
+    return "ชุมชน";
+  }
+
+  if (isPlaceCategory(category)) {
+    return category;
+  }
+
+  return placeCategoryLabels[category as PlaceCategorySlug] ?? legacyCategoryLabels[category] ?? "ชุมชน";
+}
+
+export function getPlaceCategorySlug(category: PlaceCategory | string): PlaceCategorySlug {
+  return categorySlugByLabel[normalizePlaceCategory(category)];
+}
+
+export function normalizeDistrict(district: string | null | undefined) {
+  return (district ?? "").replace(/^อำเภอ/, "").trim();
+}
+
+export function getDistrictDisplayName(district: string | null | undefined) {
+  const normalizedDistrict = normalizeDistrict(district);
+
+  return normalizedDistrict ? `อำเภอ${normalizedDistrict}` : "";
+}
+
+function isPlaceCategory(category: string): category is PlaceCategory {
+  return Object.values(placeCategoryLabels).includes(category as PlaceCategory);
+}
 
 export const places: Place[] = [
   {
@@ -218,7 +266,7 @@ export const placeCategories: PlaceCategory[] = Array.from(
 );
 
 export const placeDistricts = Array.from(
-  new Set(places.map((place) => place.district))
+  new Set(places.map((place) => normalizeDistrict(place.district)))
 ).sort((a, b) => a.localeCompare(b, "th"));
 
 export function getPlaceBySlug(slug: string) {
