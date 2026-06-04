@@ -4,7 +4,7 @@ create type public.post_type as enum ('news', 'story');
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   display_name text,
-  role text not null default 'editor' check (role in ('admin', 'editor')),
+  role text not null default 'viewer' check (role in ('admin', 'editor', 'viewer')),
   created_at timestamptz not null default now()
 );
 
@@ -82,6 +82,16 @@ create table public.site_settings (
   updated_at timestamptz not null default now()
 );
 
+create table public.audit_logs (
+  id uuid primary key default gen_random_uuid(),
+  actor_id uuid references public.profiles(id) on delete set null,
+  action text not null,
+  entity_type text not null,
+  entity_id uuid,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
 create or replace function public.is_admin()
 returns boolean
 language sql
@@ -94,16 +104,29 @@ as $$
   );
 $$;
 
+create or replace function public.can_manage_content()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.profiles
+    where id = auth.uid() and role in ('admin', 'editor')
+  );
+$$;
+
 alter table public.profiles enable row level security;
 alter table public.categories enable row level security;
 alter table public.posts enable row level security;
 alter table public.places enable row level security;
 alter table public.media enable row level security;
 alter table public.site_settings enable row level security;
+alter table public.audit_logs enable row level security;
 
 create policy "Published posts are public"
 on public.posts for select
-using (status = 'published' or public.is_admin());
+using (status = 'published' or public.can_manage_content());
 
 create index places_status_published_at_idx
 on public.places (status, published_at desc);
@@ -116,7 +139,7 @@ on public.places using gin (tags);
 
 create policy "Published places are public"
 on public.places for select
-using (status = 'published');
+using (status = 'published' or public.can_manage_content());
 
 create policy "Categories are public"
 on public.categories for select
@@ -130,35 +153,47 @@ create policy "Settings are public"
 on public.site_settings for select
 using (true);
 
+create policy "Users can read their own profile"
+on public.profiles for select
+using (id = auth.uid() or public.is_admin());
+
 create policy "Admins manage profiles"
 on public.profiles for all
 using (public.is_admin())
 with check (public.is_admin());
 
-create policy "Admins manage categories"
+create policy "Editors manage categories"
 on public.categories for all
-using (public.is_admin())
-with check (public.is_admin());
+using (public.can_manage_content())
+with check (public.can_manage_content());
 
-create policy "Admins manage posts"
+create policy "Editors manage posts"
 on public.posts for all
-using (public.is_admin())
-with check (public.is_admin());
+using (public.can_manage_content())
+with check (public.can_manage_content());
 
-create policy "Admins manage places"
+create policy "Editors manage places"
 on public.places for all
-using (public.is_admin())
-with check (public.is_admin());
+using (public.can_manage_content())
+with check (public.can_manage_content());
 
-create policy "Admins manage media"
+create policy "Editors manage media"
 on public.media for all
-using (public.is_admin())
-with check (public.is_admin());
+using (public.can_manage_content())
+with check (public.can_manage_content());
 
 create policy "Admins manage settings"
 on public.site_settings for all
 using (public.is_admin())
 with check (public.is_admin());
+
+create policy "Admins read audit logs"
+on public.audit_logs for select
+using (public.is_admin());
+
+create policy "Editors insert audit logs"
+on public.audit_logs for insert
+with check (public.can_manage_content());
 
 insert into public.categories (name, slug)
 values
